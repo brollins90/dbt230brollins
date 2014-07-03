@@ -17,14 +17,19 @@ public class EmployeeDatabase {
 	HashMap<String, ArrayList<Integer>> iFirstName = null;
 	HashMap<Integer, ArrayList<Integer>> iHireDate = null;	
 	HashMap<String, ArrayList<Integer>> iLastName = null;
+	private int highestId;
 	
 	public EmployeeDatabase() {
 		db = new HashMap<Integer, Employee>();
 		iFirstName = new HashMap<String, ArrayList<Integer>>();
 		iHireDate = new HashMap<Integer, ArrayList<Integer>>();
 		iLastName = new HashMap<String, ArrayList<Integer>>();
+		highestId = 0;
 	}
 	
+	/**
+	 * Clears the database and all the indexes
+	 */
 	private void clearAll() {
 		db.clear();
 		iFirstName.clear();
@@ -32,7 +37,13 @@ public class EmployeeDatabase {
 		iLastName.clear();
 	}
 	
+	/**
+	 * Adds a new employee to the db
+	 * @param e	The new employee
+	 * @param id The ID of the employee
+	 */
 	public void addEmployee(Employee e, int id) {
+		this.highestId = (id > highestId) ? id : highestId;
 		db.put(id, e);
 		
 		String curFirst = e.getFirstName().toUpperCase();
@@ -62,10 +73,13 @@ public class EmployeeDatabase {
 			ArrayList<Integer> temp = new ArrayList<Integer>();
 			temp.add(id);
 			iLastName.put(curLast, temp);
-		}
-		
+		}		
 	}
 	
+	/**
+	 * Loads serialized object files from a directory
+	 * @param directory The directory that contains the serialized files
+	 */
 	public void loadFromFiles(String directory) {
 		clearAll();
 
@@ -86,7 +100,24 @@ public class EmployeeDatabase {
 			}
 		}
 	}
+	
+	/**
+	 * Returns the highest ID in the DB
+	 * @return  THe highest ID in the DB
+	 */
+	public int getHighestId() {
+//		int highest = 0;
+//		for (int i : db.keySet()) {
+//			highest = (i > highest) ? i : highest;
+//		}
+//		return highest;
+		return ++this.highestId;
+	}
 
+	/**
+	 * Loads a serialized hashmap from a file
+	 * @param file The file containing the HashMap
+	 */
 	@SuppressWarnings("unchecked")
 	public void loadFromFile(String file) {
 		try {
@@ -107,10 +138,18 @@ public class EmployeeDatabase {
 		}
 	}
 	
+	/**
+	 * Serializes the database and saves it to a file
+	 * @param file The location to save the file
+	 */
 	public void saveToFile(String file) {
 		FileOutputStream fos;
 		try {
-			fos = new FileOutputStream(file);
+			File yourFile = new File(file);
+			if(!yourFile.exists()) {
+			    yourFile.createNewFile();
+			} 
+			fos = new FileOutputStream(yourFile, false); 
 
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 			oos.writeObject(db);
@@ -125,32 +164,51 @@ public class EmployeeDatabase {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Prints all the records to the Console
+	 */
 	public void printAll() {
 		for (int i : db.keySet()) {
 			System.out.println(db.get(i));
 		}
 	}
 
+	/**
+	 * Prints the employee that matches the ID to the console
+	 * @param id The ID to search for
+	 */
 	public void printEmployeeMatchingID(int id) {
 		System.out.println(db.get(id));
 	}
 
+	/**
+	 * Prints all the employees that have the specified last name to the console
+	 * @param lName The search last name
+	 */
 	public void printEmployeesWithLastName(String lName) {
 		for (int i : iLastName.get(lName.toUpperCase())) {
 			System.out.println(db.get(i));
 		}
 	}
 
+	/**
+	 * Prints all the employees that have the specified first name to the console
+	 * @param lName The search first name
+	 */
 	public void printEmployeesWithFirstName(String fName) {
 		for (int i : iFirstName.get(fName.toUpperCase())) {
 			System.out.println(db.get(i));
 		}
 	}
 
+	/**
+	 * Prints all the employees that have the specified hire date to the console
+	 * @param lName The search hire date
+	 */
 	public void printEmployeesWithHireDate(int date) {
 		for (int i : iHireDate.get(date)) {
 			System.out.println(db.get(i));
 		}
 	}
-
 }
