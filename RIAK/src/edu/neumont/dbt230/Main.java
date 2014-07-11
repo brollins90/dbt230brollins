@@ -34,7 +34,9 @@ public class Main {
 
 		try {
 			EmployeeDatabase ed = new EmployeeDatabase();
-			ed.loadFromFile("C:\\_\\src\\Neumont\\DBT230-SB1\\RDMS\\Employees.ser");
+			System.out.println("loading");
+			ed.loadFromFiles("/home/blake/Downloads/long serialized");//\\Employees.ser");
+			System.out.println("loaded");
 			
 			for (int i : ed.db.keySet()){
 				addEmployeeToRiak(i, ed.db.get(i), ed.db.get(i).getLastName());
